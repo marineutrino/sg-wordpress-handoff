@@ -1,0 +1,71 @@
+// ============================================================
+//  SeaGlass — Design Tokens
+// ============================================================
+
+// --- Brand Colors ---
+$navy:          #153e69;
+$navy-dark:     #123f68;
+$navy-deep:     #0a1a2c;
+$teal:          #0d84a9;
+$teal-dark:     #0a6a8a;
+$teal-green:    #008774;
+$teal-active:   #00a69a;
+$green-accent:  #2f8d8b;
+$cream:         #edeae2;
+$cream-bg:      #FBFBF5;
+$mid-navy:      #263b5e;
+$dark-text:     #1c2430;
+
+// --- Typography ---
+$font:          'Montserrat', sans-serif;
+
+// --- Horizontal Padding (matching Tailwind px-4/px-12/px-20/px-24) ---
+$px-xs:         16px;
+$px-sm:         32px;
+$px-md:         48px;
+$px-lg:         80px;
+$px-xl:         96px;
+$px-2xl:        160px;
+
+// --- Breakpoints ---
+$bp-xs:         480px;
+$bp-sm:         640px;
+$bp-md:         768px;
+$bp-lg:         1024px;
+$bp-xl:         1280px;
+$bp-2xl:        1680px;
+
+// --- Z-index ---
+$z-base:        1;
+$z-above:       10;
+$z-sticky:      20;
+$z-nav:         50;
+$z-dropdown:    60;
+$z-menu:        70;
+
+// --- Easing ---
+$ease-out-quart:  cubic-bezier(0.25, 0.46, 0.45, 0.94);
+$ease-standard:   cubic-bezier(0.4, 0, 0.2, 1);
+$ease-hero:       cubic-bezier(0.77, 0, 0.175, 1);
+
+// --- Mixins ---
+@mixin respond($bp) {
+  @media (min-width: $bp) { @content; }
+}
+
+@mixin montserrat($weight: 400, $size: inherit, $tracking: normal) {
+  font-family: $font;
+  font-weight: $weight;
+  font-size: $size;
+  letter-spacing: $tracking;
+}
+
+@mixin fade-in($delay: 0s) {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s ease $delay, transform 0.7s ease $delay;
+  &.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

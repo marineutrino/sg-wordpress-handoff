@@ -1,0 +1,209 @@
+// ============================================================
+//  SeaGlass — Lifestyle Carousel Wrapper
+//  (Coastal Living / Golf Course Living slide switcher)
+// ============================================================
+
+// --- Tagline block above Coastal/Golf sections ---
+// Matches React LifestyleCarouselWrapper MobileWrapper static block
+.sg-lifestyle-tagline {
+  background: #FBFBF5;
+  text-align: center;
+  padding: 160px 16px 128px;
+  position: relative;
+
+  @include respond($bp-md) { display: none; }
+}
+
+.sg-lifestyle-tagline__line {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 80px;
+  background: rgba($navy, 0.18);
+}
+
+.sg-lifestyle-tagline__text {
+  @include montserrat(400, 26px, normal);
+  color: $navy;
+  margin: 0;
+  text-wrap: pretty;
+  max-width: clamp(280px, 72vw, 760px);
+  margin-inline: auto;
+  line-height: 1.6;
+}
+
+.sg-lifestyle-carousel {
+  position: relative;
+  width: 100vw;
+  height: calc(640vh + 140px);
+  overflow-x: clip;
+}
+
+// Each panel fills the wrapper absolutely.
+.lcw-panel {
+  position: absolute;
+  inset: 0;
+}
+
+.lcw-panel--coastal { z-index: 2; }
+.lcw-panel--golf    { z-index: 3; pointer-events: none; }
+
+// --- Slideshow transition: cover/reveal ---
+// Golf stage slides in on top of coastal (which stays put).
+// The transform lives on the inner .glh-stage (the sticky element itself) — NOT
+// on the panel — because promoting a 640vh-tall panel to its own transform layer
+// breaks the sticky stage's paint. Coastal stays a full-bleed hero underneath the
+// whole time (see goGolf in main.js), so no off-white stage background is ever
+// exposed during the slide.
+$slide-duration: 1s;
+$slide-ease: cubic-bezier(0.77, 0, 0.175, 1); // matches React timing
+
+.glh-stage {
+  transform: translateX(100%);
+  transition: transform $slide-duration $slide-ease;
+  will-change: transform;
+}
+
+// Show golf: golf slides in from right, covering coastal underneath
+.sg-lifestyle-carousel.show-golf {
+  .lcw-panel--coastal { pointer-events: none; }
+  .lcw-panel--golf    { pointer-events: auto; }
+
+  .glh-stage { transform: translateX(0); }
+}
+
+// No stage or frame transforms for the panel switch —
+// scroll-driven frame animations are owned by _lifestyle-coastal.scss / _lifestyle-golf.scss
+
+// --- Mobile tabs (coastal / golf switcher) — hidden on desktop ---
+.lcw-tabs { display: none; }
+
+// --- Mobile (≤760px): collapse wrapper, use display toggle instead of opacity fade ---
+@media (max-width: 760px) {
+  .sg-lifestyle-carousel {
+    height: auto;
+  }
+  .lcw-panel {
+    position: relative;
+    inset: auto;
+  }
+  // Hide golf panel by default; coastal stays visible
+  .lcw-panel--golf {
+    display: none;
+    opacity: 1;
+    pointer-events: auto;
+  }
+  // When golf is active, flip which panel is shown
+  .sg-lifestyle-carousel.show-golf .lcw-panel--coastal { display: none; }
+  .sg-lifestyle-carousel.show-golf .lcw-panel--golf    { display: block; }
+
+  // Hide fixed chevron buttons — replaced by tab bar
+  .lcw-btn-wrap { display: none; }
+
+  // Tab bar
+  .lcw-tabs {
+    display: flex;
+    justify-content: center;
+    background: #FBFBF5;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 0 16px;
+  }
+
+  .lcw-tab {
+    flex: 0 1 180px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .lcw-tab__label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    padding-top: 20px;
+    color: rgba(21, 62, 105, 0.5);
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .lcw-tab__line {
+    width: 100%;
+    height: 2px;
+    background: transparent;
+    transition: background 0.2s;
+  }
+
+  .lcw-tab.is-active .lcw-tab__label {
+    color: #008774;
+    font-weight: 700;
+  }
+
+  .lcw-tab.is-active .lcw-tab__line {
+    background: #00a69a;
+  }
+}
+
+// --- Fixed Chevron Buttons (viewport-anchored, centered vertically) ---
+.lcw-btn-wrap {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 9999;
+  pointer-events: none;
+  width: 45px;
+}
+
+.lcw-btn-wrap--right { right: 0; }
+.lcw-btn-wrap--left  { left: 0; }
+
+.lcw-chevron-btn {
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 180px;
+  background: #fff;
+  color: #153e69;
+  border: none;
+  cursor: pointer;
+
+  @include respond($bp-md) { height: 210px; }
+
+  svg {
+    width: 36px;
+    height: 78px;
+    stroke-width: 1;
+    stroke: #153e69;
+    transition: transform 0.2s ease;
+  }
+
+  &.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  &:hover svg { transform: translateX(4px); }
+}
+
+// Right button: separator line on left edge only (faces inward toward page)
+.lcw-chevron-btn--right {
+  border-left: 0.5px solid rgba(21, 62, 105, 0.4);
+}
+
+// Left button: separator line on right edge only (faces inward toward page)
+.lcw-chevron-btn--left {
+  border-right: 0.5px solid rgba(21, 62, 105, 0.4);
+  &:hover svg { transform: translateX(-4px); }
+}

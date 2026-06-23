@@ -1,0 +1,27 @@
+/*!
+ * Theme Name: SeaGlass Home Lifestyle Focus
+ * Description: Homepage template styles — handoff package for WordPress integration
+ * Version: 2.0
+ */
+
+// ---- Tokens & Utilities ----
+@import 'variables';
+@import 'base';
+
+// ---- Global Layout ----
+@import 'header';
+
+// ---- Homepage Sections ----
+@import 'hero';
+@import 'elite-destinations';
+@import 'listing-showcase';
+@import 'lifestyle-coastal';
+@import 'lifestyle-golf';
+@import 'lifestyle-carousel';
+@import 'areas';
+@import 'why-seaglass';
+@import 'brokerage';
+@import 'franchise';
+
+// ---- Footer ----
+@import 'footer';

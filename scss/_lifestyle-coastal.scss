@@ -1,0 +1,497 @@
+// ============================================================
+//  SeaGlass — Coastal Living Hero (Scroll-driven animation)
+//  CSS extracted directly from CoastalLivingHero.tsx
+// ============================================================
+
+.clh-track { position: relative; height: calc(640vh + 140px); }
+
+.clh-stage {
+  position: sticky; top: 0; height: 100vh; width: 100%;
+  overflow-x: clip; overflow-y: visible; background: #FBFBF5;
+}
+
+.clh-frame {
+  position: absolute; left: 0; top: 0; width: 100vw; height: 100vh;
+  overflow: hidden; will-change: left, top, width, height;
+  box-shadow: 0 40px 90px -50px rgba(13, 26, 40, 0);
+}
+.clh-frame.clh-framed { box-shadow: none; }
+
+.clh-layer {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  background-color: #27343f; transition: opacity .9s ease;
+}
+
+.clh-scrim {
+  position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  background:
+    rgba(8,17,28,.18),
+    linear-gradient(115deg, rgba(8,17,28,.50) 0%, rgba(8,17,28,.07) 38%, rgba(8,17,28,0) 60%),
+    linear-gradient(0deg, rgba(8,17,28,.40) 0%, rgba(8,17,28,0) 30%);
+
+  @media (max-width: 760px) {
+    background:
+      rgba(0,0,0,0.55),
+      linear-gradient(115deg, rgba(8,17,28,.70) 0%, rgba(8,17,28,.30) 38%, rgba(8,17,28,.15) 60%),
+      linear-gradient(0deg, rgba(8,17,28,.65) 0%, rgba(8,17,28,.15) 40%);
+  }
+}
+
+.clh-tagline {
+  position: absolute; z-index: 8; color: #fff; text-align: center;
+  line-height: 1.35; font-family: 'Montserrat', sans-serif; font-weight: 300;
+  letter-spacing: .01em; transform: translate(-50%, -50%); transform-origin: center;
+  pointer-events: none; width: min(88vw, 1100px); padding: 48px 0;
+  text-shadow: 0 2px 38px rgba(0,0,0,.4); will-change: left, top, transform, opacity;
+}
+.clh-tagline .clh-big {
+  font-size: clamp(30px, 4.6vw, 44px); font-weight: 300; text-wrap: balance;
+}
+
+.clh-coastal {
+  position: absolute; z-index: 8; opacity: 0; color: #fff; line-height: .9;
+  letter-spacing: .02em; text-shadow: 0 2px 40px rgba(0,0,0,.35);
+  will-change: transform, opacity;
+}
+.clh-coastal h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: min(clamp(46px, 7.4vw, 118px), 11vh); font-weight: 100; letter-spacing: .04em;
+  line-height: .9; -webkit-font-smoothing: antialiased; margin: 0;
+  text-shadow: 0 0 40px rgba(0,0,0,.65), 0 0 80px rgba(0,0,0,.4);
+}
+.clh-coastal h2 span { display: block; }
+
+.clh-hint {
+  position: absolute; left: 50%; bottom: 42px; transform: translateX(-50%); z-index: 9;
+  color: #fff; text-align: center; display: flex; flex-direction: column;
+  align-items: center; gap: 12px; font-size: 11px; letter-spacing: .4em; font-weight: 500;
+  font-family: 'Montserrat', sans-serif;
+}
+.clh-hint .clh-bar {
+  width: 1px; height: 46px; background: rgba(255,255,255,.7);
+  overflow: hidden; position: relative;
+}
+.clh-hint .clh-bar::after {
+  content: ""; position: absolute; left: 0; top: -50%; width: 100%; height: 50%;
+  background: #fff; animation: clhDrop 1.8s cubic-bezier(.7,0,.3,1) infinite;
+}
+@keyframes clhDrop { 0% { top: -50%; } 60%, 100% { top: 100%; } }
+
+.clh-locations {
+  position: absolute; left: clamp(58vw, 66vw, 68vw); top: calc(11vh - 40px);
+  width: clamp(280px, 30vw, 34vw); z-index: 20;
+  display: flex; flex-direction: column; max-height: clamp(240px, 46vh, 520px);
+  background: none;
+}
+.clh-loc-head {
+  font-size: 14px; font-weight: 600; letter-spacing: .15em; color: #2f8d8b;
+  padding-top: 24px; padding-bottom: 28px; opacity: 0;
+  font-family: 'Montserrat', sans-serif; transition: none;
+}
+.clh-loc-list {
+  overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.clh-loc {
+  display: flex; align-items: baseline; gap: 14px; padding: 12px 4px;
+  border-top: 1px solid rgba(22,38,63,.14); cursor: pointer; opacity: 0;
+  transform: translateY(26px); will-change: transform, opacity;
+  transition: color .35s ease; font-family: 'Montserrat', sans-serif;
+  &:last-child { border-bottom: 1px solid rgba(22,38,63,.14); }
+}
+.clh-idx {
+  font-size: 12px; font-weight: 600; letter-spacing: .12em; color: #2f8d8b; min-width: 30px;
+}
+.clh-nm {
+  font-size: clamp(19px, 1.7vw, 26px); font-weight: 300; color: #1c2430;
+  transition: color .35s, transform .45s cubic-bezier(.2,.7,.2,1);
+}
+.clh-arr { display: none; }
+.clh-loc.clh-active .clh-nm  { color: #2f8d8b; transform: translateX(8px); font-weight: 400; } // base 300 → 400
+.clh-loc.clh-active .clh-idx { color: #16263f; }
+
+.clh-cards-vp {
+  position: absolute; right: 0; width: 50vw; left: auto; top: auto; bottom: 20px;
+  height: 440px; z-index: 15; opacity: 0;
+  overflow-x: auto; overflow-y: visible; scrollbar-width: none;
+  -ms-overflow-style: none; will-change: transform, opacity;
+  -webkit-overflow-scrolling: touch; touch-action: pan-x;
+  scroll-snap-type: x proximity; padding-bottom: 20px;
+  &::-webkit-scrollbar { display: none; }
+}
+.clh-cards-row {
+  display: flex; align-items: flex-end;
+  gap: var(--cgap, 16px); padding: 12px 2vw 6px 0; height: 100%;
+}
+.clh-card {
+  flex: 0 0 auto; width: var(--cardw, 230px); background: #fff;
+  scroll-snap-align: start; border: 4px solid #fff;
+  box-shadow: 0 20px 40px -30px rgba(13,26,40,.35), 0 1px 6px -4px rgba(13,26,40,.15);
+  display: flex; flex-direction: column; cursor: pointer;
+  transition: transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s;
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 24px 48px -28px rgba(13,26,40,.38);
+  }
+}
+.clh-ph {
+  position: relative; width: 100%; height: auto; aspect-ratio: 1/1; overflow: hidden;
+  background: repeating-linear-gradient(135deg, #dfe4e6, #dfe4e6 11px, #e9edee 11px, #e9edee 22px);
+  img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform .8s cubic-bezier(.2,.7,.2,1);
+  }
+}
+.clh-card:hover .clh-ph img { transform: scale(1.06); }
+.clh-body {
+  padding: 12px 16px 16px; display: flex; flex-direction: column; gap: 1px;
+}
+.clh-price {
+  font-size: 14px; font-weight: 600; color: #16263f; letter-spacing: .01em;
+  font-family: 'Montserrat', sans-serif; line-height: 1.3; white-space: nowrap;
+}
+.clh-addr {
+  font-size: 12px; font-weight: 300; color: #1c2430; margin-top: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-family: 'Montserrat', sans-serif;
+}
+.clh-cnm {
+  font-size: 11px; font-weight: 400; color: #6b7480;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-family: 'Montserrat', sans-serif;
+}
+.clh-cards-tag {
+  position: absolute; right: 0; width: 50vw; left: auto; bottom: 0; top: auto; z-index: 16;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 clamp(12px, 2vw, 32px) 0 20px; opacity: 0; pointer-events: none;
+}
+.clh-cnav {
+  position: relative; width: 36px; height: 36px;
+  border: none; background: none; padding: 0; color: #0d84a9;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  transition: transform .35s, color .25s; pointer-events: none;
+  svg { width: 18px; height: 18px; }
+  &:hover { color: #153e69; transform: translateY(-1px); }
+  &:active { transform: translateY(0); }
+  &[disabled] { opacity: 0.3; pointer-events: none; }
+}
+
+// "View Listings" link — sits below the frosted stats box inside stats-group
+.clh-view-link {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0;
+  transition: opacity 0.5s ease, color 0.25s;
+  pointer-events: auto;
+  padding-top: 4px;
+  &:hover { color: #fff; }
+}
+
+// --- Stats group: flex column anchored bottom-left of frame ---
+.clh-stats-group {
+  position: absolute; bottom: 28px; left: max(26px, 2.8vw); z-index: 10;
+  display: flex; flex-direction: column; gap: 12px; pointer-events: none;
+  max-width: calc(100% - max(26px, 2.8vw) - 16px); overflow: hidden;
+}
+.clh-stat-city {
+  font-family: 'Montserrat', sans-serif; font-size: clamp(16px, 1.5vw, 22px); font-weight: 500;
+  color: rgba(255,255,255,.92); letter-spacing: .04em;
+  white-space: nowrap;
+  opacity: 0; transform: translateY(8px);
+  transition: opacity .5s ease, transform .5s ease;
+  text-shadow: 0 1px 6px rgba(0,0,0,.65), 0 0 40px rgba(0,0,0,.5), 0 0 80px rgba(0,0,0,.3);
+}
+.clh-stats {
+  display: flex; align-items: center;
+  opacity: 0;
+  transition: opacity .55s ease, transform .55s ease;
+  background: rgba(255,255,255,.10);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,.30); border-radius: 2px;
+  padding: 14px 20px;
+  box-shadow: 0 4px 24px rgba(0,0,0,.12);
+  max-width: 100%; overflow: hidden;
+}
+// Safari: backdrop-filter has known rendering issues — use a solid dark tint fallback
+@supports (background: -webkit-named-image(i)) {
+  .clh-stats {
+    background: rgba(8, 17, 28, 0.22);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: 1px solid rgba(255, 255, 255, .14);
+  }
+}
+.clh-stats-row { display: flex; align-items: center; }
+.clh-stat {
+  display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 0 20px;
+  &:first-child { padding-left: 0; }
+  &:last-child  { padding-right: 0; }
+}
+.clh-stat-val {
+  font-family: 'Montserrat', sans-serif; font-size: clamp(18px, 1.4vw, 22px);
+  font-weight: 600; color: rgba(255,255,255,.96); letter-spacing: .03em; white-space: nowrap;
+}
+.clh-stat-lbl {
+  font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 500;
+  color: rgba(255,255,255,.9); letter-spacing: .14em; text-transform: uppercase; white-space: nowrap;
+}
+.clh-stat-div { width: 1px; height: 32px; background: rgba(255,255,255,.5); flex-shrink: 0; }
+
+.clh-blurb {
+  position: absolute; z-index: 8; opacity: 0;
+  will-change: left, top, transform, opacity; pointer-events: none;
+  p {
+    font-family: 'Montserrat', sans-serif; font-size: clamp(15px, 1.2vw, 19px);
+    font-weight: 300; color: #1c2430; line-height: 1.65;
+    letter-spacing: 0.01em; margin: 0 0 18px; max-width: 420px;
+    text-wrap: pretty; // prevent single-word runts on expanded state
+  }
+  a {
+    font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 600;
+    letter-spacing: 0.2em; text-transform: uppercase; color: #0d84a9;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+    pointer-events: auto; transition: color .25s;
+    svg { transition: transform .25s; }
+    &:hover { color: #153e69; svg { transform: translateX(4px); } }
+  }
+}
+
+// --- Tablet (761–900px): scroll animation still active, tighten list column ---
+@media (min-width: 761px) and (max-width: 900px) {
+  .clh-coastal h2     { font-size: clamp(56px, 7.4vw, 64px); font-weight: 200; }
+  .clh-blurb p        { max-width: 340px; }
+  .clh-locations      { left: 63vw; width: calc(100vw - 63vw - 14px); top: calc(10vh - 40px); max-height: 52vh; }
+  .clh-loc-head       { font-size: 11px; padding-top: 14px; padding-bottom: 16px; }
+  .clh-nm             { font-size: clamp(15px, 2.4vw, 22px); font-weight: 500; }
+  .clh-loc.clh-active .clh-nm { font-weight: 700; }
+  .clh-idx            { font-size: 10px; min-width: 22px; }
+  .clh-loc            { gap: 10px; padding: 20px 4px; }
+  .clh-cards-vp       { bottom: 80px; }
+  .clh-view-link      { font-size: 11px; }
+  .clh-cnav           { width: 30px; height: 30px; svg { width: 16px; height: 16px; } }
+}
+
+// --- Tagline narrows on desktop ---
+@media (min-width: 768px) {
+  .clh-tagline { width: min(70vw, 900px); }
+  .clh-tagline .clh-big { text-wrap: balance; }
+}
+
+// --- Medium desktops (768–1300px): stat city label adjusts ---
+@media (min-width: 768px) and (max-width: 1300px) {
+  .clh-stat-city { font-size: clamp(19px, 2vw, 24px); font-weight: 600; }
+}
+
+// --- Narrow desktops (1024–1150px): push cards further right + shrink USD stat ---
+@media (min-width: 1024px) and (max-width: 1150px) {
+  .clh-cards-vp  { left: calc(50vw + 40px); width: auto; right: 0; touch-action: pan-x pan-y; }
+  .clh-cards-tag { left: calc(50vw + 40px); width: auto; right: 0; }
+  // Reduce "USD" / price stat label to give more right padding outside frosted box
+  .clh-stat-val  { font-size: 14px; }
+  .clh-stat-lbl  { font-size: 8px; }
+}
+
+// --- Tablet desktops (768–1023px): stats wrap into 2 rows; allow vertical scroll via touch ---
+@media (min-width: 768px) and (max-width: 1023px) {
+  .clh-cards-vp       { touch-action: pan-x pan-y; bottom: 80px; } // 40px up to overlap lower-right corner of hero image
+  .clh-price          { font-size: 12px; } // reduce listing price label
+  .clh-stats          { width: 320px; max-width: 320px; box-sizing: border-box; padding: 10px 14px; }
+  .clh-stats-row      { flex-wrap: wrap; align-items: center; }
+  // Row 1: stat | vdiv | stat
+  .clh-stats-row > div:nth-child(1) { flex: 0 0 calc(50% - 0.5px); padding: 0 10px 0 0; min-width: 0; }
+  .clh-stats-row > div:nth-child(2) { flex: 0 0 1px; align-self: stretch; height: 32px; }
+  .clh-stats-row > div:nth-child(3) { flex: 0 0 calc(50% - 0.5px); padding: 0 0 0 10px; min-width: 0; }
+  .clh-stat-lbl       { white-space: nowrap; text-align: center; }
+  // Horizontal divider between rows
+  .clh-stats-row > div:nth-child(4) {
+    flex: 0 0 100%; height: 1px; width: 100%;
+    background: rgba(255,255,255,.4); margin: 10px 0;
+  }
+  // Row 2: full-width stat, centered
+  .clh-stats-row > div:nth-child(5) { flex: 0 0 100%; padding: 0; align-items: center; }
+  .clh-stat-val       { font-size: clamp(13px, 2.2vw, 18px); }
+  .clh-stat-lbl       { font-size: 9px; letter-spacing: .1em; }
+  .clh-stat-div       { height: 26px; }
+}
+
+// Mobile title row and image nav buttons — hidden on desktop
+.clh-mob-title-row { display: none; }
+.clh-mob-img-nav   { display: none; }
+
+// --- Mobile (≤760px): disable scroll animation, stack image → list → cards ---
+@media (max-width: 760px) {
+  .clh-track          { height: auto; }
+  .clh-stage          {
+    position: relative; height: auto; overflow: visible;
+    display: flex; flex-direction: column; background: #FBFBF5;
+  }
+  .clh-frame          {
+    position: relative; left: auto; top: auto;
+    width: 100%; height: 50vh; min-height: 300px; aspect-ratio: unset;
+    flex-shrink: 0; box-shadow: none;
+  }
+  // Scrim kept — provides contrast for white title text
+  .clh-tagline        { display: none; }
+  .clh-hint           { display: none; }
+  // Desktop coastal headline hidden — mobile title row replaces it
+  .clh-coastal        { display: none; }
+  .clh-blurb          { display: none; }
+
+  // Mobile title row: centered heading only (no side chevrons)
+  .clh-mob-title-row {
+    display: flex; align-items: center; justify-content: center;
+    position: absolute; top: 20px; left: 0; right: 0; z-index: 9;
+    color: #fff; text-shadow: 0 2px 30px rgba(0,0,0,.45);
+  }
+  .clh-mob-title-spacer { display: none; }
+  .clh-mob-title-text {
+    text-align: center;
+    h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(50px, 11vw, 70px);
+      font-weight: 300; margin: 0;
+      letter-spacing: .04em; line-height: 0.9;
+      span { display: block; }
+    }
+  }
+  .clh-mob-chevron { display: none; }
+
+  // Mobile image nav buttons — left/right arrows centered vertically in frame
+  .clh-mob-img-nav {
+    display: flex; position: absolute;
+    top: 50%; transform: translateY(-50%); z-index: 10;
+    background: none; border: none; cursor: pointer;
+    color: #fff; filter: drop-shadow(0 2px 10px rgba(0,0,0,.55));
+    padding: 8px; align-items: center; justify-content: center;
+    svg { width: 28px; height: 28px; }
+    &--prev { left: 8px; }
+    &--next { right: 8px; }
+    &:disabled { opacity: 0.3; cursor: default; }
+  }
+
+  // Stats: city name + frosted box at bottom of image — matches React mobile
+  .clh-stats-group    {
+    bottom: 14px; left: 14px; right: 14px; max-width: calc(100% - 28px);
+    flex-direction: column; gap: 7px; padding: 0;
+    background: none; backdrop-filter: none; -webkit-backdrop-filter: none;
+  }
+  .clh-stat-city      {
+    opacity: 1; transform: none;
+    font-size: clamp(19px, 3.2vw, 23px); font-weight: 600;
+    color: rgba(255,255,255,.9); letter-spacing: .04em;
+    text-shadow: 0 1px 6px rgba(0,0,0,.65), 0 0 40px rgba(0,0,0,.5), 0 0 80px rgba(0,0,0,.3); text-align: center;
+  }
+  // Inner stats box: frosted glass — dark navy background
+  .clh-stats          {
+    opacity: 1; transform: none;
+    background: rgba(21, 62, 105, 0.30);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,.18);
+    box-shadow: none; padding: 9px 12px; width: 100%;
+  }
+  // Safari: backdrop-filter unreliable — solid dark navy fallback
+  @supports (background: -webkit-named-image(i)) {
+    .clh-stats {
+      background: rgba(21, 62, 105, 0.40);
+      backdrop-filter: none; -webkit-backdrop-filter: none;
+      border: 1px solid rgba(255,255,255,.14);
+    }
+  }
+  // 2-row flex-wrap: [Listings | Avg Price] / [Price Range full-width] — matches React mobile
+  .clh-stats-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+  .clh-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    min-width: 0;
+  }
+  // Top row: first two stats at 50% each
+  .clh-stats-row > div:nth-child(1) { flex: 0 0 calc(50% - 0.5px); }
+  .clh-stats-row > div:nth-child(2) { flex: 0 0 1px; align-self: stretch; background: rgba(255,255,255,.35); }
+  .clh-stats-row > div:nth-child(3) { flex: 0 0 calc(50% - 0.5px); }
+  // Horizontal divider
+  .clh-stats-row > div:nth-child(4) { flex: 0 0 100%; height: 1px; width: 100%; background: rgba(255,255,255,.35); margin: 8px 0; }
+  // Price range: full width
+  .clh-stats-row > div:nth-child(5) { flex: 0 0 100%; }
+
+  .clh-stat-val {
+    text-align: center;
+    font-size: clamp(16px, 3.5vw, 20px);
+    font-weight: 600;
+    color: rgba(255,255,255,.96);
+    letter-spacing: .02em;
+    white-space: nowrap;
+  }
+  // Price range value is slightly smaller
+  .clh-stats-row > div:nth-child(5) .clh-stat-val { font-size: clamp(14px, 3.2vw, 18px); }
+
+  .clh-stat-lbl {
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: .1em;
+    color: rgba(255,255,255,.78);
+    white-space: nowrap;
+  }
+  .clh-locations      {
+    position: relative; left: auto; top: auto;
+    width: 100%; max-height: none; background: #FBFBF5;
+    padding: 0 20px 12px; z-index: 1;
+  }
+  .clh-loc-list       { overflow-y: visible; overscroll-behavior: auto; max-height: none; }
+  .clh-loc-head       { font-size: 22px; padding-top: 20px; padding-bottom: 16px; } // +2× larger
+  .clh-nm             { font-size: clamp(21px, 4vw, 26px); font-weight: 500; }
+  .clh-loc.clh-active .clh-nm { font-weight: 700; }
+  .clh-idx            { font-size: 10px; min-width: 24px; }
+  .clh-loc            { gap: 10px; padding: 13px 4px; }
+  .clh-cards-vp       {
+    position: relative; left: auto; top: auto; bottom: auto; right: auto;
+    width: calc(100vw - 16px); height: 200px; z-index: 5;
+    align-self: flex-start; margin-left: 16px; margin-top: 0;
+    touch-action: pan-x pan-y; // allow page to scroll vertically over the card row
+  }
+  .clh-view-link      { color: rgba(255,255,255,0.90); padding-top: 6px; align-self: center; display: flex; font-size: 11px; }
+  .clh-cards-tag      {
+    position: relative; left: auto; top: auto; bottom: auto; right: auto;
+    width: 100%; padding: 6px 20px; z-index: 1;
+  }
+  // Show "View All" CTA below the pager row on mobile
+  .clh-blurb          {
+    display: flex; justify-content: center;
+    position: relative; left: auto; top: auto; bottom: auto; right: auto;
+    width: 100%; padding: 16px 20px 48px; z-index: 1;
+    opacity: 1; pointer-events: auto;
+    p { display: none; } // hide the blurb text — CTA only
+  }
+  .clh-cnav           { width: 30px; height: 30px; pointer-events: auto; svg { width: 16px; height: 16px; } }
+  .clh-price          { white-space: nowrap; font-size: 15px; }
+  .clh-addr           { font-size: 13px; }
+  .clh-cnm            { font-size: 12px; }
+  .clh-card           { width: clamp(120px, 47vw, 168px); }
+}
+
+// --- Small phones (≤480px) ---
+@media (max-width: 480px) {
+  .clh-loc-head     { font-size: 12px; padding-top: 14px; padding-bottom: 12px; letter-spacing: 0.12em; }
+  .clh-nm           { font-size: 14px; }
+  .clh-idx          { font-size: 9px; min-width: 18px; }
+  .clh-loc          { padding: 10px 4px; gap: 8px; }
+  .clh-locations    { padding: 0 16px 10px; }
+  .clh-cards-vp     { height: 175px; }
+}

@@ -1,0 +1,290 @@
+// ============================================================
+//  SeaGlass — Listing Showcase (Tabbed + Horizontal Scroll Cards)
+// ============================================================
+
+.sg-listing-showcase {
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 0 80px;
+
+  @include respond($bp-md) { padding: 60px 0 120px; }
+  @include respond($bp-lg) { padding: 80px 0 160px; }
+}
+
+// --- Header + Tabs ---
+.sg-listing-showcase__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  padding: 0 40px;
+}
+
+.sg-listing-showcase__title {
+  @include montserrat(300, clamp(28px, 4vw, 48px), normal);
+  color: $navy;
+  line-height: 1.25;
+  text-align: center;
+}
+
+// Tabs
+.sg-listing-tabs {
+  border-bottom: 1px solid rgba(#000, 0.1);
+  width: 100%;
+}
+
+.sg-listing-tabs__inner {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 0 0 0 16px;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+
+  @include respond($bp-sm) {
+    gap: 32px;
+  }
+
+  @include respond($bp-lg) {
+    padding: 0;
+    justify-content: center;
+  }
+}
+
+.sg-listing-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 100px;
+  padding: 20px 4px 0;
+  position: relative;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  @include respond($bp-sm) { min-width: 110px; }
+}
+
+.sg-listing-tab__label {
+  @include montserrat(500, 11px, 1.12px);
+  color: rgba($navy, 0.5);
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: color 0.2s ease, font-weight 0.2s ease;
+  padding-bottom: 12px;
+
+  @include respond($bp-sm)  { font-size: 12px; }
+  @include respond($bp-lg)  { font-size: 14px; }
+}
+
+.sg-listing-tab.is-active .sg-listing-tab__label {
+  font-weight: 600;
+  color: $teal-green;
+}
+
+.sg-listing-tab:hover:not(.is-active) .sg-listing-tab__label {
+  font-weight: 600;
+  color: $navy;
+}
+
+.sg-listing-tab__underline {
+  position: absolute;
+  bottom: 0;
+  left: 0; right: 0;
+  height: 2px;
+  background: $teal-active;
+  transform: scaleX(0);
+  transition: transform 0.2s $ease-standard;
+  transform-origin: left;
+}
+
+.sg-listing-tab.is-active .sg-listing-tab__underline { transform: scaleX(1); }
+
+// --- Sentinel (used by IntersectionObserver to trigger card reveal) ---
+.sg-listing-showcase__sentinel {
+  width: 100%;
+  height: 1px;
+  visibility: hidden;
+}
+
+// --- Cards Row ---
+.sg-listing-showcase__scroll-wrap {
+  position: relative;
+  width: 100%;
+  padding-top: 32px;
+  padding-bottom: 16px;
+}
+
+.sg-listing-showcase__scroll {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  overflow-x: auto;
+  padding-left: 20px;
+
+  @include respond($bp-sm) { padding-left: 40px; }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+// Scroll arrows
+.sg-listing-showcase__arrow {
+  position: absolute;
+  top: 50%;
+  // +8px compensates for the 32px padding-top on scroll-wrap so the button centers on the image
+  transform: translateY(calc(-50% + 8px));
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 68px;
+  background: #fff;
+  color: $navy;
+
+  @include respond($bp-md) { width: 44px; height: 84px; }
+
+  svg {
+    width: 20px; height: 20px;
+    stroke: $navy;
+    stroke-width: 1.8;
+    transition: transform 0.2s ease;
+  }
+
+  &--left  {
+    left: 0;
+    &:hover svg { transform: translateX(-6px); }
+  }
+  &--right {
+    right: 0;
+    &:hover svg { transform: translateX(6px); }
+  }
+}
+
+// --- Listing Card ---
+.sg-listing-card {
+  flex-shrink: 0;
+  width: 90vw; // mob: +10% image size (was 82vw)
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.65s $ease-standard, transform 0.65s $ease-standard;
+
+  // Responsive widths
+  @media (min-width: 640px) and (max-width: 767px)  { width: calc(50vw - 50px); }
+  @media (min-width: 768px) and (max-width: 1023px) { width: calc(66vw - 10px); }
+  @media (min-width: 1024px) { width: calc(48vw - 40px); max-width: 766px; }
+  @media (min-width: 1681px) { width: calc(33.33vw - 40px); max-width: none; }
+
+  &.is-revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sg-listing-card__image-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 550 / 357;
+  overflow: hidden;
+}
+
+.sg-listing-card__image {
+  position: absolute;
+  top: -10%; left: 0; right: 0;
+  width: 100%; height: 120%;
+  object-fit: cover;
+  translate: 0 var(--parallax-y, 0px);
+  will-change: translate;
+  transition: transform 0.45s $ease-standard;
+}
+
+.sg-listing-card:hover .sg-listing-card__image {
+  transform: scale(1.06);
+}
+
+.sg-listing-card__gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 100%);
+  transition: background 0.35s ease;
+}
+
+.sg-listing-card:hover .sg-listing-card__gradient {
+  background: linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.72) 100%);
+}
+
+.sg-listing-card__lifestyle {
+  position: absolute;
+  top: 0; left: 0;
+  padding: 16px;
+
+  span {
+    @include montserrat(400, 12px, 0.12em); // mob: tighter kerning, -1px size
+    color: #fff;
+    text-transform: uppercase;
+  }
+
+  @include respond($bp-md) {
+    span { letter-spacing: 0.22em; font-size: 13px; }
+  }
+}
+
+.sg-listing-card__location {
+  position: absolute;
+  bottom: 0; left: 0;
+  padding: 20px;
+  transform: translateY(0);
+  transition: transform 0.35s $ease-standard;
+
+  span {
+    @include montserrat(400, clamp(19px, 2vw, 26px), 0.72px); // mob: +1px floor
+    color: #fff;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+}
+
+.sg-listing-card:hover .sg-listing-card__location {
+  transform: translateY(-5px);
+}
+
+.sg-listing-card__hover-details {
+  position: absolute;
+  bottom: 0; left: 0;
+  padding: 0 20px;
+  padding-bottom: calc(1.25rem + clamp(16px, 2vw, 24px) * 1.2 + 13px);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+
+  p {
+    @include montserrat(500, 15px, 0.06em);
+    color: #fff;
+    text-transform: uppercase;
+
+    &:first-child {
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+  }
+}
+
+.sg-listing-card:hover .sg-listing-card__hover-details {
+  opacity: 1;
+  transform: translateY(-5px);
+}

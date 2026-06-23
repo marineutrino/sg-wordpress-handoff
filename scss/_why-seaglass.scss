@@ -1,0 +1,532 @@
+// ============================================================
+//  SeaGlass — Why SeaGlass Brand (Glassmorphism Video Section)
+//  Mirrors: WhySeaglassBrand.tsx
+// ============================================================
+
+.sg-why-seaglass {
+  position: relative;
+  width: 100%;
+  min-height: clamp(560px, 80vh, 900px);
+  font-family: $font;
+}
+
+// Background video
+.sg-why-seaglass__bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #1a2a35; // fallback when video shifts via parallax or hasn't loaded
+
+  video {
+    width: 100%;
+    height: calc(100% + 64px); // covers ±32px parallax range so no gap shows
+    margin-top: -32px;
+    object-fit: cover;
+    display: block;
+  }
+
+  // Mobile: hide video, use static image instead
+  @media (max-width: #{$bp-md - 1px}) {
+    background-image: url('https://images.unsplash.com/photo-1642450910660-797e4912379c?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+    background-size: cover;
+    background-position: center;
+
+    video { display: none; }
+  }
+}
+
+.sg-why-seaglass__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, rgba(8,17,28,0.52) 0%, rgba(8,17,28,0.18) 45%, rgba(8,17,28,0.08) 100%);
+}
+
+// Content layer
+.sg-why-seaglass__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: clamp(560px, 80vh, 900px);
+  padding: clamp(48px, 6vh, 80px) 0 clamp(48px, 6vh, 80px) clamp(32px, 8.57vw, 144px);
+
+  // On mobile: center the card, no horizontal padding
+  @media (max-width: #{$bp-md - 1px}) {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  // Tablet (768–1023px): left-align, left margin matches brokerage heading ($px-md = 48px)
+  @media (min-width: #{$bp-md}) and (max-width: 1023px) {
+    justify-content: flex-start;
+    padding-left: $px-md;
+    padding-right: clamp(28px, 5vw, 64px);
+  }
+}
+
+// Card group
+// Mobile: square box (same dimensions as React mobile)
+// Desktop: flex-row, auto width
+.sg-why-seaglass__cards {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  border-radius: clamp(40px, 5.95vw, 100px) 0 clamp(40px, 5.95vw, 100px) 0;
+  overflow: hidden;
+
+  // Border rendered as ::after so it always paints above glass-bg and children
+  // (backdrop-filter / SVG distortion filter can visually obscure a native border)
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(255,255,255,0.82);
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 100;
+  }
+  position: relative;
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+
+  // Mobile: hug content; only expand height when panel is open
+  width: min(calc(100vw - 72px), 468px);
+  height: auto;
+  transition: opacity 0.9s ease, transform 0.9s ease;
+
+  @media (max-width: #{$bp-md - 1px}) {
+    &.is-expanded {
+      height: auto; // card height set by in-flow panel content
+    }
+  }
+
+  @include respond($bp-md) {
+    flex-direction: row;
+    width: auto;
+    min-height: unset;
+    border-radius: clamp(60px, 5.95vw, 100px) 0 clamp(60px, 5.95vw, 100px) 0;
+  }
+
+  // Tablet: let cards grow when panel opens (width driven by children)
+  @media (min-width: #{$bp-md}) and (max-width: 1023px) {
+    width: auto;
+    max-width: none;
+  }
+
+  &.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Shared glass background across cards (spans main + panel on desktop)
+.sg-why-seaglass__glass-bg {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  filter: url(#glass-distortion-brand);
+  -webkit-filter: url(#glass-distortion-brand);
+  box-shadow: 0 0 21px -8px rgba(255,255,255,0.3), inset 0 0 5px -8px rgba(255,255,255,0.7);
+  z-index: 0;
+}
+
+// Main card
+.sg-why-seaglass__main {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+
+  // Mobile: fills the cards box, no own padding (slide children handle it)
+  @media (max-width: #{$bp-md - 1px}) {
+    flex: 1;
+    min-height: 0;
+  }
+
+  // Desktop: fixed width + padding (reset flex: 1 from mobile)
+  @include respond($bp-md) {
+    flex: none;
+    width: clamp(300px, 32.4vw, 544px);
+    min-width: 0; // prevent content from blowing past the clamp
+    padding: clamp(36px, 4.76vw, 80px);
+    gap: 24px;
+  }
+
+  // Tablet: match franchise hero card width
+  @media (min-width: #{$bp-md}) and (max-width: 1023px) {
+    width: clamp(330px, 32vw, 530px);
+  }
+}
+
+// ── Mobile slide container ────────────────────────────────────
+// On mobile: clips the translateX animation for default ↔ panel swap.
+// On desktop: invisible wrapper.
+.sg-why-seaglass__slide {
+  position: relative;
+  flex: 1;
+
+  @media (max-width: #{$bp-md - 1px}) {
+    overflow: hidden;
+  }
+
+  @include respond($bp-md) {
+    overflow: visible; // no clipping needed on desktop
+    flex: 1; // fill the main card
+  }
+}
+
+// Default view (heading + body + CTAs)
+.sg-why-seaglass__default {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  @media (max-width: #{$bp-md - 1px}) {
+    position: relative; // normal flow so card height = default content height
+    padding: clamp(28px, 6vw, 44px); // equal all sides
+    gap: 14px;
+    justify-content: flex-start;
+    transform: translateX(0);
+    transition: transform 0.3s ease-in-out;
+
+    &.is-offscreen {
+      position: absolute; // leave flow when sliding out; card height held by is-expanded min-height
+      inset: 0;
+      transform: translateX(-100%);
+    }
+  }
+
+  @include respond($bp-md) {
+    position: static;
+    transform: none;
+    gap: 24px;
+    justify-content: center;
+  }
+}
+
+// Mobile panel view (slides in from right; hidden on desktop)
+.sg-why-seaglass__panel-mobile {
+  display: none;
+
+  @media (max-width: #{$bp-md - 1px}) {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    min-height: 100%;
+    padding: clamp(28px, 6vw, 44px); // same as default — equal all sides
+    overflow: visible;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+
+    &.is-active {
+      position: relative; // re-enter flow so card height matches panel content
+      transform: translateX(0);
+      top: auto; left: auto; right: auto;
+      min-height: 0;
+    }
+  }
+}
+
+.sg-why-seaglass__panel-close-mobile {
+  flex-shrink: 0;
+  color: #fff;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+
+  svg { width: 22px; height: 22px; stroke: currentColor; }
+
+  &:hover { color: #fff; }
+}
+
+.sg-why-seaglass__panel-mobile-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: center;
+  flex: 1;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.25s ease 0.05s, transform 0.25s ease 0.05s;
+
+  &.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Heading row: back arrow left of the label
+.sg-why-seaglass__panel-mobile-heading-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sg-why-seaglass__panel-mobile-label {
+  @include montserrat(300, clamp(20px, 5vw, 28px), 0.04em);
+  color: #fff;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.sg-why-seaglass__panel-mobile-body {
+  @include montserrat(400, clamp(15px, 3.7vw, 17px), 0.02em); // matches default body text
+  color: #fff;
+  line-height: 1.7;
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.sg-why-seaglass__panel-mobile-cta {
+  align-self: flex-start;
+  @include montserrat(500, 12px, 0.12em);
+  text-transform: uppercase;
+  color: #fff;
+  background: none;
+  border: 1px solid rgba(255,255,255,0.6);
+  border-radius: 2px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  margin-top: 4px;
+
+  &:hover { border-color: rgba(255,255,255,1); }
+}
+
+// ── Heading & body text ───────────────────────────────────────
+
+.sg-why-seaglass__heading {
+  color: #fff;
+  line-height: 1.25;
+  margin: 0;
+
+  // Mobile: match franchise hero title weight + size
+  @media (max-width: #{$bp-md - 1px}) {
+    @include montserrat(400, clamp(28px, 2.86vw, 48px));
+  }
+
+  // Desktop: light weight, narrower fluid range (matches React source)
+  @include respond($bp-md) {
+    @include montserrat(300, clamp(28px, 2.86vw, 44px));
+  }
+}
+
+.sg-why-seaglass__body-text {
+  color: #fff;
+  line-height: 1.78;
+  margin: 0;
+  text-wrap: pretty;
+
+  @media (max-width: #{$bp-md - 1px}) {
+    @include montserrat(400, clamp(15px, 3.7vw, 17px));
+  }
+
+  @include respond($bp-md) {
+    @include montserrat(400, clamp(14px, 1.07vw, 18px));
+  }
+}
+
+// CTA buttons (For Buyers / For Sellers)
+.sg-why-seaglass__ctas {
+  display: flex;
+  gap: 20px;
+
+  @include respond($bp-md) {
+    gap: 40px;
+    // Tablet: spread buttons so right padding of "For Sellers" = left padding of card
+    @media (max-width: 1023px) { justify-content: space-between; }
+  }
+}
+
+.sg-why-seaglass__cta-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+  text-transform: uppercase;
+  color: #fff;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color 0.25s ease;
+
+  @media (max-width: #{$bp-md - 1px}) {
+    @include montserrat(700, 12px, 0.35px);
+  }
+
+  @include respond($bp-md) {
+    @include montserrat(700, 14px, 0.35px);
+  }
+
+  &:hover,
+  &.is-active { color: #fff; }
+}
+
+// ── Desktop expanding side panel ──────────────────────────────
+// Hidden on mobile — mobile uses .sg-why-seaglass__panel-mobile instead.
+
+.sg-why-seaglass__panel {
+  @media (max-width: #{$bp-md - 1px}) {
+    display: none;
+  }
+
+  overflow: hidden;
+  flex-shrink: 0;
+  width: 0;
+  transition: width 0.35s $ease-standard;
+
+  &.is-open { width: clamp(330px, 28.6vw, 506px); }
+}
+
+.sg-why-seaglass__panel-inner {
+  position: relative;
+  z-index: 1;
+  width: clamp(330px, 28.6vw, 506px);
+  min-height: 100%;
+  height: auto;
+  padding: clamp(28px, 3vw, 48px) clamp(24px, 2.5vw, 40px);
+  border-left: 1px solid rgba(255,255,255,0.4);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+  box-sizing: border-box;
+}
+
+.sg-why-seaglass__panel-close {
+  position: absolute;
+  top: clamp(16px, 1.8vw, 28px);
+  right: clamp(16px, 1.8vw, 28px);
+  color: #fff;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 2;
+  transition: color 0.2s ease;
+
+  svg { width: 24px; height: 24px; stroke: currentColor; }
+
+  &:hover { color: #fff; }
+}
+
+.sg-why-seaglass__panel-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  will-change: opacity, transform;
+
+  &.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sg-why-seaglass__panel-label {
+  @include montserrat(300, clamp(20px, 1.8vw, 30px), 0.04em);
+  color: #fff;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.sg-why-seaglass__panel-body {
+  @include montserrat(400, clamp(13px, 1.1vw, 16px), 0.02em);
+  color: #fff;
+  line-height: 1.7;
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.sg-why-seaglass__panel-cta {
+  align-self: flex-start;
+  @include montserrat(500, 12px, 0.12em);
+  text-transform: uppercase;
+  color: #fff;
+  background: none;
+  border: 1px solid rgba(255,255,255,0.6);
+  border-radius: 2px;
+  padding: 10px 20px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: border-color 0.2s ease;
+  margin-top: 4px;
+
+  &:hover { border-color: rgba(255,255,255,1); }
+}
+
+// ── ≤767px: force mobile slide behavior ──────────────────────────────────────
+// 768px and above get the desktop outward-expanding panel.
+// Note: if the WP JS isMobile() threshold is ≤768, update it to <768 to match.
+@media (max-width: #{$bp-md - 1px}) {
+  // Reset desktop card layout so mobile slide works at exactly 768px
+  .sg-why-seaglass__cards {
+    flex-direction: column;
+    height: auto;
+    &.is-expanded { height: auto; }
+  }
+
+  .sg-why-seaglass__main {
+    flex: 1;
+    min-height: 0;
+    padding: 0;
+    gap: 0;
+    width: auto;
+  }
+
+  .sg-why-seaglass__slide {
+    overflow: hidden;
+  }
+
+  .sg-why-seaglass__default {
+    position: relative;
+    padding: clamp(28px, 6vw, 44px);
+    gap: 14px;
+    justify-content: flex-start;
+    transform: translateX(0);
+    transition: transform 0.3s ease-in-out;
+
+    &.is-offscreen {
+      position: absolute;
+      inset: 0;
+      transform: translateX(-100%);
+    }
+  }
+
+  .sg-why-seaglass__panel-mobile {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    min-height: 100%;
+    padding: clamp(28px, 6vw, 44px);
+    overflow: visible;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+
+    &.is-active {
+      position: relative;
+      transform: translateX(0);
+      top: auto; left: auto; right: auto;
+      min-height: 0;
+    }
+  }
+
+  // Hide desktop panel at 768px — mobile uses panel-mobile instead
+  .sg-why-seaglass__panel { display: none; }
+
+  // Match expanded panel body size to default body size at this breakpoint
+  .sg-why-seaglass__panel-mobile-body {
+    font-size: clamp(14px, 1.07vw, 18px);
+  }
+}

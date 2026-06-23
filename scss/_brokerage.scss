@@ -1,0 +1,186 @@
+// ============================================================
+//  SeaGlass — Brokerage Section (Tabbed Content + Image)
+// ============================================================
+
+.sg-brokerage {
+  background: #fff;
+  padding: 96px $px-xs 64px;
+
+  @include respond($bp-md) { padding: 160px $px-md 112px; }
+  @include respond($bp-lg) { padding: 224px 80px 144px; } // 80px matches other sections at lg
+}
+
+.sg-brokerage__heading-wrap {
+  text-align: center;
+  margin-bottom: 32px;
+
+  @include respond($bp-md) { margin-bottom: 40px; }
+}
+
+.sg-brokerage__heading {
+  @include montserrat(300, clamp(28px, 4vw, 48px));
+  color: $navy;
+  line-height: 1.3;
+
+  em {
+    font-style: italic;
+    font-weight: 600;
+  }
+}
+
+.sg-brokerage__inner { max-width: 1520px; margin: 0 auto; padding: 0 0 0; }
+
+// --- Tab Bar ---
+.sg-brokerage__dropdown-wrap {
+  position: relative;
+  margin-bottom: 32px;
+
+  @include respond($bp-sm) { display: none; }
+
+  select {
+    width: 100%;
+    border: 1px solid rgba($navy, 0.2);
+    padding: 12px 40px 12px 16px;
+    @include montserrat(400, 14px, 0.12em); // match areas dropdown
+    color: $navy;
+    text-transform: uppercase;
+    background: #fff;
+    appearance: none;
+    cursor: pointer;
+    border-radius: 0;
+    &:focus { outline: none; }
+  }
+  .caret {
+    position: absolute; top: 0; bottom: 0; right: 0;
+    width: 40px;
+    display: flex; align-items: center; justify-content: center;
+    pointer-events: none;
+    svg { width: 16px; height: 16px; stroke: rgba($navy, 0.7); }
+  }
+}
+
+.sg-brokerage__tabs {
+  display: none;
+  margin-bottom: 32px;
+
+  @include respond($bp-sm) {
+    display: flex;
+    margin-bottom: 48px;
+  }
+}
+
+.sg-brokerage__tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+
+  &:hover { opacity: 0.8; }
+}
+
+.sg-brokerage__tab-bar {
+  width: 100%;
+  background: rgba($teal-active, 0.3);
+  height: 2px;
+  transition: height 0.2s ease, background 0.2s ease;
+}
+
+.sg-brokerage__tab.is-active .sg-brokerage__tab-bar {
+  background: $teal-active;
+  height: 4px;
+}
+
+.sg-brokerage__tab-label {
+  @include montserrat(600, clamp(12px, 1vw, 16px), 1px);
+  color: $navy;
+  text-transform: uppercase;
+  padding-top: 12px;
+
+  @include respond($bp-md) { padding-top: 16px; }
+}
+
+// --- Content Panel ---
+.sg-brokerage__panel {
+  display: none;
+  flex-direction: column;
+  gap: 32px;
+  min-height: 300px;
+  align-items: flex-start;
+  justify-content: center;
+
+  @include respond($bp-lg) {
+    flex-direction: row;
+    align-items: center;
+    gap: 56px;
+    min-height: 486px;
+  }
+
+  &.is-active { display: flex; }
+}
+
+.sg-brokerage__panel-text {
+  width: 100%;
+
+  @include respond($bp-lg) {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 660px;
+  }
+}
+
+.sg-brokerage__panel-title {
+  @include montserrat(500, clamp(20px, 2.5vw, 28px));
+  color: $navy;
+  line-height: clamp(24px, 2.5vw, 32px);
+  margin-bottom: 20px;
+
+  @include respond($bp-md) { margin-bottom: 28px; }
+}
+
+.sg-brokerage__panel-body {
+  @include montserrat(400, clamp(16px, 1.5vw, 20px));
+  color: $navy;
+  opacity: 0.8;
+  line-height: clamp(24px, 2.5vw, 33px);
+  margin-bottom: 24px;
+
+  @include respond($bp-md) { margin-bottom: 36px; }
+}
+
+.sg-brokerage__panel-cta {
+  display: inline-block;
+  background: none;
+  border: 1px solid #0c84aa;
+  border-radius: 2px;
+  padding: 14px 20px;
+  @include montserrat(600, 12px, 0.12em);
+  color: #0c84aa;
+  text-transform: uppercase;
+  transition: opacity 0.2s ease;
+
+  @include respond($bp-md) { padding: 14px 22px; }
+
+  &:hover { opacity: 0.7; }
+}
+
+.sg-brokerage__panel-image-wrap {
+  width: 100%;
+  aspect-ratio: 715 / 486;
+  overflow: hidden;
+  flex-shrink: 1;
+  position: relative;
+
+  @include respond($bp-lg) { flex: 0 0 min(715px, 52%); width: auto; }
+
+  img {
+    position: absolute;
+    top: -10%; left: 0; right: 0;
+    width: 100%; height: 120%;
+    object-fit: cover;
+    transition: opacity 0.5s ease;
+    translate: 0 var(--parallax-y, 0px);
+    will-change: translate;
+  }
+}

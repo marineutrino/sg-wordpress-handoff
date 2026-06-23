@@ -1,0 +1,300 @@
+// ============================================================
+//  SeaGlass — Areas We Serve (Filterable Grid + Pagination)
+// ============================================================
+
+.sg-areas {
+  background: #fff;
+  padding: 64px $px-xs 64px;
+
+  @include respond($bp-md) { padding: 96px $px-lg 96px; }
+  @include respond($bp-lg) { padding: 120px $px-lg 160px; }
+}
+
+.sg-areas__inner { max-width: 1920px; margin: 0 auto; }
+
+.sg-areas__header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.sg-areas__eyebrow {
+  @include montserrat(600, 11px, 0.3em);
+  color: $navy;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.sg-areas__heading {
+  @include montserrat(300, clamp(28px, 4vw, 48px));
+  color: $navy;
+  line-height: 1.25;
+  text-align: center;
+  margin-bottom: 0;
+}
+
+// --- Tab Filter ---
+.sg-areas__tabs-wrap {
+  margin-bottom: 40px;
+  margin-top: 24px;
+}
+
+// Mobile: dropdown
+.sg-areas__dropdown-wrap {
+  position: relative;
+
+  @include respond($bp-sm) { display: none; }
+
+  select {
+    width: 100%;
+    border: 1px solid rgba($navy, 0.2);
+    padding: 12px 40px 12px 16px;
+    @include montserrat(400, 14px, 0.12em);
+    color: $navy;
+    text-transform: uppercase;
+    background: #fff;
+    appearance: none;
+    cursor: pointer;
+
+    &:focus { outline: none; }
+  }
+
+  .sg-areas__dropdown-caret {
+    position: absolute;
+    top: 0; bottom: 0; right: 0;
+    width: 40px;
+    display: flex; align-items: center; justify-content: center;
+    pointer-events: none;
+
+    svg { width: 16px; height: 16px; stroke: rgba($navy, 0.7); }
+  }
+}
+
+// Desktop: tab bar
+.sg-areas__tab-bar {
+  display: none;
+
+  @include respond($bp-sm) {
+    display: block;
+    border-bottom: 1px solid rgba(#000, 0.1);
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+}
+
+.sg-areas__tab-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 24px;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  touch-action: pan-x;
+  &::-webkit-scrollbar { display: none; }
+
+  @include respond($bp-lg) {
+    gap: 32px;
+    justify-content: space-between;
+  }
+}
+
+.sg-areas__tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 100px;
+  padding-top: 20px;
+  position: relative;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  gap: 12px;
+}
+
+.sg-areas__tab-label {
+  @include montserrat(500, 12px, 1.12px);
+  color: rgba($navy, 0.5);
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: color 0.2s ease, font-weight 0.2s ease;
+  line-height: 28px;
+
+  @include respond($bp-lg) { font-size: 14px; }
+}
+
+.sg-areas__tab.is-active .sg-areas__tab-label {
+  font-weight: 600;
+  color: $teal-green;
+}
+
+.sg-areas__tab:hover:not(.is-active) .sg-areas__tab-label {
+  font-weight: 600;
+  color: $navy;
+}
+
+.sg-areas__tab-line {
+  width: 100%;
+  height: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.sg-areas__tab-underline {
+  position: absolute;
+  inset: 0;
+  background: $teal-active;
+  transform: scaleX(0);
+  transition: transform 0.25s $ease-standard;
+  transform-origin: left;
+}
+
+.sg-areas__tab.is-active .sg-areas__tab-underline { transform: scaleX(1); }
+
+// --- Count Label ---
+.sg-areas__count {
+  @include montserrat(500, 13px, 0.2em);
+  color: $navy;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 32px;
+  max-width: 1396px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+// --- Grid ---
+.sg-areas__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  max-width: 1396px;
+  margin: 0 auto 40px;
+  opacity: 1;
+  transition: opacity 0.35s ease;
+
+  &.is-transitioning { opacity: 0; }
+
+  @include respond($bp-md) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  @include respond($bp-lg) {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+}
+
+// Area Card
+.sg-area-card {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+
+  &.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sg-area-card__image-wrap {
+  position: relative;
+  aspect-ratio: 8 / 5;
+  overflow: hidden;
+}
+
+.sg-area-card__image {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s ease;
+}
+
+.sg-area-card:hover .sg-area-card__image { transform: scale(1.05); }
+
+.sg-area-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 22%, rgba(#000, 0.40) 84%);
+}
+
+.sg-area-card__content {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%;
+  padding: 8px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.sg-area-card__region-tag {
+  border-bottom: 1px solid rgba(#fff, 0.7);
+  padding-bottom: 2px;
+
+  span {
+    @include montserrat(600, 9px, 0.04em);
+    color: #fff;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+}
+
+.sg-area-card__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.sg-area-card__name {
+  @include montserrat(400, clamp(16px, 1.4vw, 24px), 0.01em);
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.sg-area-card__arrow {
+  width: 20px; height: 20px;
+  flex-shrink: 0;
+  opacity: 0.8;
+  svg { width: 100%; height: 100%; stroke: #fff; }
+}
+
+// --- Pagination ---
+.sg-areas__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 8px;
+}
+
+.sg-areas__page-btn {
+  color: $navy;
+  transition: color 0.2s ease;
+
+  svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 1.5; }
+
+  &:hover { color: $teal; }
+  &:disabled { color: rgba($navy, 0.2); pointer-events: none; }
+}
+
+.sg-areas__page-label {
+  @include montserrat(500, 12px, 0.15em);
+  color: rgba($navy, 0.6);
+}
+
+// Empty state
+.sg-areas__empty {
+  @include montserrat(400, 14px, 0.1em);
+  color: rgba($navy, 0.5);
+  text-align: center;
+  padding: 48px 0;
+  text-transform: uppercase;
+}

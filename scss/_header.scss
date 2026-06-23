@@ -1,0 +1,315 @@
+// ============================================================
+//  SeaGlass — Site Header & Navigation
+// ============================================================
+
+.sg-site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: $z-nav;
+  padding: 12px $px-xs 0;
+  transition: background 0.4s ease, backdrop-filter 0.4s ease, border-color 0.4s ease, padding 0.3s ease, transform 0.35s ease;
+
+  &.nav-hidden {
+    transform: translateY(-100%);
+  }
+
+  @include respond($bp-md) { padding: 40px $px-md 0; }
+  @include respond($bp-lg) { padding: 40px $px-lg 0; }
+
+  &.scrolled {
+    background: rgba(30, 90, 175, 0.28);
+    backdrop-filter: blur(24px) saturate(1.5) brightness(0.92);
+    -webkit-backdrop-filter: blur(24px) saturate(1.5) brightness(0.92);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    padding-top: 12px;
+    padding-bottom: 0;
+  }
+}
+
+.sg-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(#fff, 0.2);
+  position: relative;
+}
+
+// --- Logo ---
+// React: w-[145px] sm:w-[154px] md:w-[176px] lg:w-[200px] (+10% for WP)
+.sg-nav__logo {
+  width: 160px;
+  flex-shrink: 0;
+
+  @include respond($bp-sm)  { width: 169px; }
+  @include respond($bp-md)  { width: 194px; }
+  @include respond($bp-lg)  { width: 220px; }
+
+  svg { width: 100%; height: auto; }
+}
+
+// --- Desktop Nav Links ---
+.sg-nav__links {
+  display: none;
+
+  @include respond($bp-lg) {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  @media (min-width: 1280px) { gap: 36px; }
+}
+
+.sg-nav__link {
+  @include montserrat(500, clamp(12px, 1vw, 14px), 0.1em);
+  color: #fff;
+  text-transform: uppercase;
+  transition: opacity 0.2s ease;
+  position: relative;
+
+  &:hover { opacity: 0.8; }
+}
+
+// Each nav item is the positioning parent for its own dropdown
+.sg-nav__item {
+  position: relative;
+}
+
+// Bar pseudo-element — always anchored to nav item left edge, above the dropdown panel
+.sg-nav__item::after {
+  content: '';
+  position: absolute;
+  bottom: -22px;
+  left: 0;
+  width: 64px;
+  height: 6px;
+  background: #d9d8d6;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: $z-dropdown + 1;
+}
+.sg-nav__item:hover::after { opacity: 1; }
+
+// Desktop mega-dropdown (shown on hover)
+.sg-nav__dropdown {
+  position: absolute;
+  top: calc(100% + 22px);
+  left: 0;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-6px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: $z-dropdown;
+  white-space: nowrap;
+}
+
+.sg-nav__item:hover .sg-nav__dropdown {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+// Right-align dropdowns for last 3 items to prevent viewport overflow on smaller screens
+.sg-nav__item:nth-last-child(-n+3) .sg-nav__dropdown {
+  left: auto;
+  right: 0;
+}
+
+// Hide old in-dropdown bar — bar is now a pseudo-element on the nav item
+.sg-nav__dropdown-bar {
+  display: none;
+}
+
+// Two-column panel wrapper
+.sg-nav__dropdown-panel {
+  display: flex;
+}
+
+// Shared column styles
+.sg-nav__dropdown-col {
+  padding: 40px 32px;
+
+  &--left {
+    width: 230px;
+    background: rgba(248, 248, 248, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  &--right {
+    width: 264px;
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+}
+
+.sg-nav__dropdown-heading {
+  @include montserrat(600, 12px, 0.02em);
+  color: #9e9e9e;
+  text-transform: uppercase;
+  line-height: 32px;
+  margin-bottom: 4px;
+}
+
+.sg-nav__dropdown-col a {
+  display: block;
+  @include montserrat(400, 16px, 0);
+  color: $navy;
+  line-height: 42px;
+  transition: opacity 0.15s ease;
+  &:hover { opacity: 0.65; }
+}
+
+// --- Right Icons ---
+.sg-nav__icons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+
+  @include respond($bp-sm)  { gap: 12px; }
+  @include respond($bp-md)  { gap: 16px; }
+
+  a,
+  button {
+    color: #fff;
+    display: flex;
+    align-items: center;
+    transition: opacity 0.2s ease;
+    &:hover { opacity: 0.8; }
+  }
+
+  // React: size-6 (24px) at mobile/md, size-7 (28px) at lg
+  svg {
+    width: 24px; height: 24px;
+    @include respond($bp-md)  { width: 24px; height: 24px; }
+    @include respond($bp-lg)  { width: 28px; height: 28px; }
+  }
+}
+
+// Desktop icons (search + profile) — hidden until lg
+.sg-nav__icon-desktop {
+  display: none;
+
+  @include respond($bp-lg) { display: flex; }
+}
+
+// Hamburger — hidden on desktop by default; shown below lg OR when nav overflows
+.sg-nav__hamburger {
+  display: none !important;
+}
+
+// Show hamburger on mobile/tablet
+@media (max-width: #{$bp-lg - 1px}) {
+  .sg-nav__hamburger { display: flex !important; }
+  .sg-nav__links     { display: none !important; }
+}
+
+// Show hamburger when JS detects nav items no longer fit
+.sg-site-header.nav-collapsed .sg-nav__hamburger { display: flex !important; }
+.sg-site-header.nav-collapsed .sg-nav__links     { display: none !important; }
+
+// ============================================================
+//  Mobile Menu (slide-in from right)
+// ============================================================
+
+.sg-mobile-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(#000, 0.5);
+  z-index: $z-menu - 1;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+
+  &.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  @include respond($bp-lg) { display: none; }
+}
+
+.sg-mobile-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 280px;
+  background: #fff;
+  z-index: $z-menu;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.15);
+
+  &.is-open { transform: translateX(0); }
+
+  @include respond($bp-lg) { display: none; }
+}
+
+.sg-mobile-menu__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px;
+  border-bottom: 1px solid #e5e7eb;
+
+  .sg-mobile-menu__avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: $teal;
+    display: flex; align-items: center; justify-content: center;
+    svg { width: 24px; height: 24px; color: #fff; stroke: #fff; }
+  }
+
+  .sg-mobile-menu__close {
+    padding: 4px;
+    svg { width: 24px; height: 24px; color: $navy; stroke: $navy; }
+  }
+}
+
+.sg-mobile-menu__nav {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.sg-mobile-menu__nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid #f3f4f6;
+  transition: background 0.15s ease;
+
+  &:hover { background: #f9fafb; }
+
+  span {
+    @include montserrat(500, 14px, 0.1em);
+    color: $navy;
+    text-transform: uppercase;
+  }
+
+  svg {
+    width: 20px; height: 20px;
+    color: $navy; stroke: $navy;
+    transform: rotate(90deg);
+  }
+}
+
+.sg-mobile-menu__footer {
+  padding: 24px;
+  border-top: 1px solid #e5e7eb;
+
+  p {
+    @include montserrat(400, 12px, 0.08em);
+    color: $navy;
+    text-transform: uppercase;
+  }
+}

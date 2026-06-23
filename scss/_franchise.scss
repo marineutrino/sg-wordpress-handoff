@@ -1,0 +1,284 @@
+// ============================================================
+//  SeaGlass — Franchise Section
+// ============================================================
+
+.sg-franchise {
+  overflow: hidden;
+  padding-bottom: 0;
+
+  @include respond($bp-md) { padding-bottom: 40px; }
+  @include respond($bp-lg) { padding-bottom: 80px; }
+}
+
+// --- Hero Band ---
+.sg-franchise__hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(560px, 80vh, 900px);
+  padding-top: 0;
+  padding-left: clamp(16px, 6vw, 76px);
+  padding-right: clamp(16px, 6vw, 76px);
+  // padding-bottom equals the cards overlap so the content is centered in the visible hero zone
+  padding-bottom: clamp(30px, 5vw, 68px);
+
+  @include respond($bp-md) { justify-content: flex-end; }
+
+  // Tablet: ~20% shorter background image height; right padding matches cards grid
+  @media (min-width: #{$bp-md}) and (max-width: 1023px) {
+    min-height: clamp(420px, 64vh, 720px);
+    padding-right: clamp(28px, 5vw, 64px);
+  }
+}
+
+.sg-franchise__hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.sg-franchise__hero-img {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  width: 100%;
+  height: calc(100% + 200px);
+  object-fit: cover;
+  object-position: 55% top;
+  will-change: transform;
+  display: block;
+}
+
+.sg-franchise__hero-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top,
+    rgba(10,26,44,0.30) 0%,
+    rgba(10,26,44,0.12) 40%,
+    rgba(10,26,44,0)    65%,
+    rgba(10,26,44,0.05) 100%);
+  pointer-events: none;
+}
+
+// Glass card — hero copy (mirrors .sg-why-seaglass__cards / __main logic)
+.sg-franchise__hero-card {
+  position: relative;
+  z-index: 2;
+  width: clamp(280px, 88vw, 520px);
+  border: 1px solid rgba(255,255,255,0.82);
+  border-radius: clamp(40px, 5.95vw, 100px) 0 clamp(40px, 5.95vw, 100px) 0;
+  padding: clamp(44px, 4vw, 64px);
+  margin-right: 0;
+  overflow: hidden;
+
+  @include respond($bp-md) {
+    width: clamp(320px, 32vw, 520px);
+    border-radius: clamp(60px, 5.95vw, 100px) 0 clamp(60px, 5.95vw, 100px) 0;
+    margin-right: 64px;
+  }
+
+  // Tablet: right-edge aligns with franchise cards section right edge; +10px width
+  @media (min-width: #{$bp-md}) and (max-width: 1023px) {
+    margin-right: 0;
+    width: clamp(330px, 32vw, 530px);
+  }
+}
+
+.sg-franchise__hero-card-glass {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  filter: url(#glass-distortion-brand);
+  -webkit-filter: url(#glass-distortion-brand);
+  box-shadow: 0 0 21px -8px rgba(255,255,255,0.3), inset 0 0 5px -8px rgba(255,255,255,0.7);
+  z-index: 0;
+}
+
+.sg-franchise__hero-card-text {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  text-shadow: 0 0 18px rgba(8,24,40,0.7);
+}
+
+.sg-franchise__eyebrow {
+  @include montserrat(300, 13px, 0.06em);
+  color: #fff;
+  text-transform: none;
+  padding-left: 12px;
+  border-left: 1px solid rgba(255,255,255,0.4);
+  margin-bottom: 0;
+}
+
+.sg-franchise__hero-title {
+  @include montserrat(300, clamp(28px, 2.86vw, 48px));
+  color: #fff;
+  line-height: 1.25;
+  margin: 0;
+
+  @media (max-width: #{$bp-md - 1px}) {
+    @include montserrat(400, clamp(28px, 2.86vw, 48px));
+  }
+}
+
+.sg-franchise__hero-body {
+  @include montserrat(400, clamp(14px, 1.07vw, 18px));
+  color: #fff;
+  line-height: 1.78;
+  margin: 0;
+  max-width: 420px;
+
+  @media (max-width: #{$bp-md - 1px}) {
+    @include montserrat(400, clamp(15px, 3.7vw, 17px));
+  }
+}
+
+// --- Dual Path Cards ---
+.sg-franchise__cards {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(36px, 4vw, 64px);
+  max-width: 1180px;
+  margin: clamp(-68px, -5vw, -30px) auto 0;
+  padding: 0 clamp(28px, 5vw, 64px) clamp(48px, 5vw, 80px);
+
+  @include respond($bp-md) { grid-template-columns: 1fr 1fr; }
+}
+
+.sg-franchise-card {
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+
+  &.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sg-franchise-card__image-frame {
+  background: #fff;
+  padding: 6px; // uniform border on all 4 sides
+  line-height: 0; // prevent inline whitespace gap above image-wrap
+
+  // Mobile: reduce top border by 2px
+  @media (max-width: #{$bp-md - 1px}) {
+    padding-top: 4px;
+  }
+
+  // Tablet: top border appears heavier due to rendering — reduce to match sides
+  @media (min-width: #{$bp-md}) and (max-width: 1023px) {
+    padding-top: 2px;
+  }
+}
+
+.sg-franchise-card__image-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+
+.sg-franchise-card__image {
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  width: 120%;
+  height: 120%;
+  max-width: none;
+  object-fit: cover;
+  will-change: transform;
+}
+
+// Card body
+.sg-franchise-card__body {
+  background: #fff;
+  padding: 0 24px 24px;
+  padding-top: clamp(20px, 1.8vw, 28px);
+  display: flex;
+  flex-direction: column;
+}
+
+.sg-franchise-card__eyebrow {
+  @include montserrat(500, 11px, 0.08em);
+  color: $teal;
+  text-transform: uppercase;
+}
+
+.sg-franchise-card__title {
+  @include montserrat(400, clamp(22px, 2.5vw, 32px));
+  color: $navy-dark;
+  line-height: 1.25;
+  margin-top: 12px;
+  font-weight: 400;
+}
+
+.sg-franchise-card__body-text {
+  @include montserrat(400, clamp(15px, 1.4vw, 16px)); // mob: +2px floor
+  color: $navy-dark;
+  opacity: 1;
+  line-height: 1.7;
+  margin-top: 12px;
+  margin-bottom: 20px;
+}
+
+.sg-franchise-card__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.sg-franchise-card__list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.sg-franchise-card__check {
+  flex-shrink: 0;
+  margin-top: 2px;
+
+  svg {
+    width: 18px; height: 18px;
+    stroke: $teal;
+    stroke-width: 2.4;
+    fill: none;
+  }
+}
+
+.sg-franchise-card__list-text {
+  @include montserrat(400, clamp(15px, 1.4vw, 16px)); // mob: +2px floor
+  color: $navy-dark;
+  opacity: 1;
+  line-height: 1.6;
+}
+
+.sg-franchise-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  background: none;
+  color: #0c84aa;
+  padding: 14px 22px;
+  @include montserrat(600, 12px, 0.12em);
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1px solid #0c84aa;
+  border-radius: 2px;
+  outline: none;
+  transition: opacity 0.2s ease;
+
+  &:hover { opacity: 0.7; }
+}
